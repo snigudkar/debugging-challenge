@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 //Paste your 5000 port url here and remove last /
-const API="https://upgraded-carnival-g4rg4ww9546pcwwrx-5000.app.github.dev"
+const API="https://fantastic-rotary-phone-wr76vv4qp9jxcg9vq-5000.app.github.dev"
 
 const API_URL = `${API}/api/posts`;
 

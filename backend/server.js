@@ -8,11 +8,11 @@ const app = express();
 const PORT = 5000;
 const API_PATH = '/api/posts';
 
-// --- 1. MIDDLEWARE ---
+//  MIDDLEWARE ---
 app.use(cors());
 app.use(express.json());
 
-// --- 2. DATABASE SETUP (In-Memory MongoDB) ---
+//  DATABASE SETUP (In-Memory MongoDB) ---
 async function startDB() {
   const mongo = await MongoMemoryServer.create({
     instance: {
@@ -23,14 +23,14 @@ async function startDB() {
   const uri = mongo.getUri();
   await mongoose.connect(uri);
 
-  console.log("✅ In-Memory MongoDB Connected");
+  console.log("In-Memory MongoDB Connected");
 }
 
 startDB().catch(err => {
-  console.error("❌ DB Startup Error:", err);
+  console.error("DB Startup Error:", err);
 });
 
-// --- 3. DATA MODEL ---
+//  DATA MODEL ---
 const PostSchema = new mongoose.Schema({
   username: String,
   message: { type: String, required: true },
@@ -39,10 +39,9 @@ const PostSchema = new mongoose.Schema({
 
 const Post = mongoose.model('Post', PostSchema);
 
-// --- 4. ROUTES ---
+//  ROUTES ---
 
-// GET all posts
-app.get(API_PATH, async (req, res) => {
+app.post(API_PATH, async (req, res) => {
   try {
     const posts = await Post.find();
     res.json(posts);
@@ -51,8 +50,12 @@ app.get(API_PATH, async (req, res) => {
   }
 });
 
-// CREATE new post
-app.post(API_PATH, async (req, res) => {
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
+
+app.put(API_PATH, async (req, res) => {
   try {
     const newPost = new Post(req.body);
     await newPost.save();
@@ -62,7 +65,3 @@ app.post(API_PATH, async (req, res) => {
   }
 });
 
-// --- 5. SERVER ---
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});

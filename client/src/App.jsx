@@ -1,81 +1,64 @@
-import React, { useState } from "react";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import Topbar from "./components/Topbar";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import Tasks from "./pages/Tasks";
-import CreateTask from "./pages/CreateTask";
-import Team from "./pages/Team";
+import React, { useState, useEffect } from 'react';
 
-function Layout({ children, user, logout }) {
-  const location = useLocation();
-  const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
+//Paste your 5000 port url here and remove last /
+const API="https://fantastic-rotary-phone-wr76vv4qp9jxcg9vq-5000.app.github.dev"
 
-  if (isAuthPage) {
-    return children;
-  }
+const API_URL = `${API}/api/posts`;
 
-  return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      
-      {user && <Topbar user={user} onLogout={logout} />}
-      
-      <main className="flex-1 overflow-y-auto">
-        <div className="max-w-7xl mx-auto p-4 md:p-8">
-          {children}
-        </div>
-      </main>
-    </div>
-  );
-}
+function App() {
+  const [msg, setMsg] = useState("");
+  const [posts, setPosts] = useState([]);
 
-export default function App() {
-  const [user, setUser] = useState(() =>
-    JSON.parse(localStorage.getItem("userInfo"))
-  );
+  const fetchPosts = async () => {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    setPosts(data);
+  };
 
-  const logout = () => {
-    localStorage.removeItem("userInfo");
-    setUser(null);
+  useEffect(() => {
+    fetchPosts();
+  }); 
+
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: "Anonymous", msg: msg }) 
+      });
+
+      if (response.ok) {
+        alert("✨ Message Ghosted Successfully!");
+        setMsg("");
+
+        fetchPosts();
+      }
+    } catch (error) {
+      console.error("Post failed:", error);
+    }
   };
 
   return (
-    <BrowserRouter>
-      <Layout user={user} logout={logout}>
-        <Routes>
-          <Route
-            path="/login"
-            element={user ? <Navigate to="/" /> : <Login setUser={setUser} />}
-          />
+  <div className="App">
+    <h1>👻 Ghost Book</h1>
+    <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+      <input
+        placeholder="Whisper a message..."
+        value={msg}
+      />
+      <button onClick={handleSubmit}>Post</button>
+    </div>
 
-          <Route
-            path="/register"
-            element={user ? <Navigate to="/" /> : <Register setUser={setUser} />}
-          />
-
-          <Route
-            path="/"
-            element={user ? <Dashboard user={user} /> : <Navigate to="/login" />}
-          />
-
-          <Route
-            path="/tasks"
-            element={user ? <Tasks user={user} /> : <Navigate to="/login" />}
-          />
-
-          <Route
-            path="/create-task"
-            element={user ? <CreateTask /> : <Navigate to="/login" />}
-          />
-
-          {/* ACCESSIBLE TO EVERYONE LOGGED IN */}
-          <Route
-            path="/team"
-            element={user ? <Team user={user} /> : <Navigate to="/login" />}
-          />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
-  );
+    <div className="posts-container">
+      {posts.map((p, index) => (
+        <div key={index} className="ghost-post">
+          <small style={{ color: '#8b949e' }}>A spirit says:</small>
+          <p style={{ margin: '5px 0 0 0', fontSize: '1.2rem' }}>"{p.message}"</p>
+        </div>
+      ))}
+    </div>
+  </div>
+);
 }
+
+export default App;
