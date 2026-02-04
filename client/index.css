@@ -1,0 +1,53 @@
+body {
+  background-color: #0d1117; /* Deep dark background */
+  color: #58a6ff; /* Ghostly blue text */
+  font-family: 'Courier New', Courier, monospace;
+  display: flex;
+  justify-content: center;
+  padding: 50px;
+}
+
+h1 {
+  text-shadow: 0 0 10px #fff, 0 0 20px #58a6ff; /* Glowing title */
+  text-align: center;
+}
+
+input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #58a6ff;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  width: 250px;
+}
+
+button {
+  background-color: #58a6ff;
+  color: #0d1117;
+  border: none;
+  padding: 10px 20px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+button:hover {
+  box-shadow: 0 0 15px #58a6ff;
+}
+
+.ghost-post {
+  background: rgba(88, 166, 255, 0.1);
+  margin-top: 15px;
+  padding: 15px;
+  border-radius: 10px;
+  border-left: 4px solid #58a6ff;
+  animation: float 3s ease-in-out infinite; /* Makes it bob up and down */
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
+}
